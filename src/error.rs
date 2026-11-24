@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Debug, Error)]
-enum Errno {
+pub enum Errno {
     #[error("EFAULT: The memory described by (local/remote)_iov is outside the caller's accessible address space.")]
     Fault,
     #[error("EINVAL: The sum of the iov_len values of either local_iov or remote_iov overflows a ssize_t value.")]
