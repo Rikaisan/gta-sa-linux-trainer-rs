@@ -1,3 +1,5 @@
+use std::ops::{Add, Sub};
+
 use libc::{iovec, process_vm_readv, process_vm_writev};
 
 use crate::{casting::{AsCVoidPtr, CVoidPtr}, error::Errno};
@@ -27,7 +29,7 @@ pub fn get_value_at_location<T>(pid: u32, location: u32) -> Result<T, Errno> whe
     return Ok(value);
 }
 
-pub fn set_value_at_location<T>(pid: u32, location: u32, mut value: T) -> Result<(), Errno> where T: CVoidPtr {
+pub fn set_value_at_location<T>(pid: u32, location: u32, mut value: T) -> Result<isize, Errno> where T: CVoidPtr {
     let local = iovec {
         iov_base: value.cvoid_ptr(),
         iov_len: size_of::<T>(),
@@ -47,5 +49,19 @@ pub fn set_value_at_location<T>(pid: u32, location: u32, mut value: T) -> Result
         return Err(Errno::get_last());
     }
 
-    return Ok(());
+    return Ok(writen);
+}
+
+pub fn add_value_at_location<T>(pid: u32, location: u32, value: T) -> Result<T, Errno> where T: Default + Copy + Add<T, Output=T> + CVoidPtr {
+    let current: T = get_value_at_location(pid, location)?;
+    let new_value = current + value;
+    set_value_at_location(pid, location, new_value)?;
+    Ok(new_value)
+}
+
+pub fn sub_value_at_location<T>(pid: u32, location: u32, value: T) -> Result<T, Errno> where T: Default + Copy + Sub<T, Output=T> + CVoidPtr {
+    let current: T = get_value_at_location(pid, location)?;
+    let new_value = current - value;
+    set_value_at_location(pid, location, new_value)?;
+    Ok(new_value)
 }
