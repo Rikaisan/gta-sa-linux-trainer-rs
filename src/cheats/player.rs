@@ -1,6 +1,7 @@
-use crate::memory;
 use crate::error::Errno;
+use crate::memory;
 
+const LOC_ARMOR: u32 = 0x502af90;
 const LOC_HEALTH: u32 = 0x502af88;
 
 const LOC_MONEY: u32 = 0xb7ce50;
@@ -53,4 +54,21 @@ pub fn set_health(pid: u32, amount: f32) -> Result<f32, Errno> {
 
 pub fn sub_health(pid: u32, amount: f32) -> Result<f32, Errno> {
     memory::sub_value_at_location(pid, LOC_HEALTH, amount)
+}
+
+pub fn get_armor(pid: u32) -> Result<f32, Errno> {
+    memory::get_value_at_location(pid, LOC_ARMOR)
+}
+
+pub fn add_armor(pid: u32, amount: f32) -> Result<f32, Errno> {
+    memory::add_value_at_location(pid, LOC_ARMOR, amount)
+}
+
+pub fn set_armor(pid: u32, amount: f32) -> Result<f32, Errno> {
+    memory::set_value_at_location(pid, LOC_ARMOR, amount)?;
+    Ok(amount)
+}
+
+pub fn sub_armor(pid: u32, amount: f32) -> Result<f32, Errno> {
+    memory::sub_value_at_location(pid, LOC_ARMOR, amount)
 }

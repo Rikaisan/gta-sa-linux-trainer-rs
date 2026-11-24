@@ -1,7 +1,7 @@
 mod cheats;
 mod casting;
-mod error;
 mod memory;
+mod error;
 mod util;
 
 use std::{fmt::Display, str::FromStr};
@@ -17,6 +17,7 @@ fn main() {
         .subcommands([ // TODO: Make a macro to easily create get/add/set/sub subcommands and their logic
             create_gass_cmd::<i32>("money")
                 .arg(Arg::new("instant").short('i').required(false).action(ArgAction::SetTrue).help("Skip the rolling animation")),
+            create_gass_cmd::<f32>("armor"),
             create_gass_cmd::<f32>("health"),
         ]).subcommand_required(true)
         .get_matches();
@@ -31,6 +32,7 @@ fn main() {
                     |pid, amount| player::sub_money(pid, amount, instant)
                 )
             },
+            Some((name @ "armor", mm)) => handle_gass_cmd(name, mm, pid, player::get_armor, player::add_armor, player::set_armor, player::sub_armor),
             Some((name @ "health", mm)) => handle_gass_cmd(name, mm, pid, player::get_health, player::add_health, player::set_health, player::sub_health),
             Some((_, _)) => unreachable!(),
             None => unreachable!(),
