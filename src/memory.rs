@@ -3,7 +3,7 @@ use std::ops::{Add, Sub};
 use libc::{iovec, process_vm_readv, process_vm_writev};
 
 use crate::{
-    casting::{AsCVoidPtr, CVoidPtr},
+    casting::{CVoidPtr, ToCVoidPtr},
     error::Errno,
 };
 
@@ -19,20 +19,27 @@ where
     };
 
     let remote = iovec {
-        iov_base: location.as_cvoid_ptr(),
+        iov_base: location.to_cvoid_ptr(),
         iov_len: size_of::<T>(),
     };
 
     let readn;
     unsafe {
-        readn = process_vm_readv(pid as i32, &local, 1, &remote, 1, 0);
+        readn = process_vm_readv(
+            pid.cast_signed(),
+            &raw const local,
+            1,
+            &raw const remote,
+            1,
+            0,
+        );
     }
 
     if readn == -1 {
         return Err(Errno::get_last());
     }
 
-    return Ok(value);
+    Ok(value)
 }
 
 pub fn set_value_at_location<T>(pid: u32, location: u32, mut value: T) -> Result<isize, Errno>
@@ -45,20 +52,27 @@ where
     };
 
     let remote = iovec {
-        iov_base: location.as_cvoid_ptr(),
+        iov_base: location.to_cvoid_ptr(),
         iov_len: size_of::<T>(),
     };
 
     let writen;
     unsafe {
-        writen = process_vm_writev(pid as i32, &local, 1, &remote, 1, 0);
+        writen = process_vm_writev(
+            pid.cast_signed(),
+            &raw const local,
+            1,
+            &raw const remote,
+            1,
+            0,
+        );
     }
 
     if writen == -1 {
         return Err(Errno::get_last());
     }
 
-    return Ok(writen);
+    Ok(writen)
 }
 
 pub fn add_value_at_location<T>(pid: u32, location: u32, value: T) -> Result<T, Errno>

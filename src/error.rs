@@ -34,6 +34,6 @@ impl From<i32> for Errno {
 
 impl Errno {
     pub fn get_last() -> Self {
-        unsafe { Errno::from(*libc::__errno_location()) }
+        unsafe { Self::from(*libc::__errno_location()) }
     }
 }

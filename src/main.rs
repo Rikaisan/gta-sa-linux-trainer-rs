@@ -39,7 +39,7 @@ fn main() {
                     |pid, amount| player::add_money(pid, amount, instant),
                     |pid, amount| player::set_money(pid, amount, instant),
                     |pid, amount| player::sub_money(pid, amount, instant),
-                )
+                );
             }
             Some((name @ "armor", mm)) => handle_gass_cmd(
                 name,
@@ -59,8 +59,7 @@ fn main() {
                 player::set_health,
                 player::sub_health,
             ),
-            Some((_, _)) => unreachable!(),
-            None => unreachable!(),
+            Some((_, _)) | None => unreachable!(),
         }
     } else {
         println!("GTA:SA not found.");
@@ -71,9 +70,8 @@ fn num_parser<T>(arg: &str) -> Result<T, clap::Error>
 where
     T: FromStr,
 {
-    Ok(arg
-        .parse::<T>()
-        .map_err(|_| clap::Error::new(ErrorKind::ValueValidation))?)
+    arg.parse::<T>()
+        .map_err(|_| clap::Error::new(ErrorKind::ValueValidation))
 }
 
 fn create_gass_cmd<T>(name: &'static str) -> Command
@@ -81,25 +79,25 @@ where
     T: FromStr + Copy + Send + Sync + 'static,
 {
     Command::new(name)
-        .about(format!("Modify the player's {}", name))
+        .about(format!("Modify the player's {name}"))
         .subcommands([
-            Command::new("get").about(format!("Gets the player's {}", name)),
+            Command::new("get").about(format!("Gets the player's {name}")),
             Command::new("add")
-                .about(format!("Adds <amount> to the player's {}", name))
+                .about(format!("Adds <amount> to the player's {name}"))
                 .arg(
                     Arg::new("amount")
                         .required(true)
                         .value_parser(num_parser::<T>),
                 ),
             Command::new("set")
-                .about(format!("Sets the player's {} to <amount>", name))
+                .about(format!("Sets the player's {name} to <amount>"))
                 .arg(
                     Arg::new("amount")
                         .required(true)
                         .value_parser(num_parser::<T>),
                 ),
             Command::new("sub")
-                .about(format!("Subtracts <amount> to the player's {}", name))
+                .about(format!("Subtracts <amount> to the player's {name}"))
                 .arg(
                     Arg::new("amount")
                         .required(true)
@@ -126,34 +124,33 @@ fn handle_gass_cmd<T, GetFn, AddFn, SetFn, SubFn>(
 {
     match matches.subcommand() {
         Some(("get", _)) => match get_fn(pid) {
-            Ok(value) => println!("{}: {}", name, value),
-            Err(e) => eprintln!("Couldn't get {}: {}", name, e),
+            Ok(value) => println!("{name}: {value}"),
+            Err(e) => eprintln!("Couldn't get {name}: {e}"),
         },
         Some(("add", msm)) => {
             if let Some(amount) = msm.get_one::<T>("amount") {
                 match add_fn(pid, *amount) {
-                    Ok(new_value) => println!("{} added! New amount: {}", name, new_value),
-                    Err(e) => eprintln!("Couldn't add {}: {}", name, e),
+                    Ok(new_value) => println!("{name} added! New amount: {new_value}"),
+                    Err(e) => eprintln!("Couldn't add {name}: {e}"),
                 }
             }
         }
         Some(("set", msm)) => {
             if let Some(amount) = msm.get_one::<T>("amount") {
                 match set_fn(pid, *amount) {
-                    Ok(new_value) => println!("{} set! New amount: {}", name, new_value),
-                    Err(e) => eprintln!("Couldn't set {}: {}", name, e),
+                    Ok(new_value) => println!("{name} set! New amount: {new_value}"),
+                    Err(e) => eprintln!("Couldn't set {name}: {e}"),
                 }
             }
         }
         Some(("sub", msm)) => {
             if let Some(amount) = msm.get_one::<T>("amount") {
                 match sub_fn(pid, *amount) {
-                    Ok(new_value) => println!("{} subtracted! New amount: {}", name, new_value),
-                    Err(e) => eprintln!("Couldn't subtract {}: {}", name, e),
+                    Ok(new_value) => println!("{name} subtracted! New amount: {new_value}"),
+                    Err(e) => eprintln!("Couldn't subtract {name}: {e}"),
                 }
             }
         }
-        Some((_, _)) => unreachable!(),
-        None => unreachable!(),
+        Some((_, _)) | None => unreachable!(),
     }
 }
