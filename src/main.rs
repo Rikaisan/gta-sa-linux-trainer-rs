@@ -4,7 +4,7 @@ mod error;
 mod memory;
 mod util;
 
-use crate::{cheats::player, error::Errno};
+use crate::{cheats::player::{self, PlayerAction, Stat}, error::Errno};
 use clap::{Arg, ArgAction, ArgMatches, builder::Command, error::ErrorKind};
 use std::{fmt::Display, str::FromStr};
 
@@ -34,30 +34,27 @@ fn main() {
                 handle_gass_cmd(
                     name,
                     mm,
-                    pid,
-                    player::get_money,
-                    |pid, amount| player::add_money(pid, amount, instant),
-                    |pid, amount| player::set_money(pid, amount, instant),
-                    |pid, amount| player::sub_money(pid, amount, instant),
+                    || player::execute_action(pid, PlayerAction::GetValue(Stat::Money)),
+                    |amount: i32| if instant { player::execute_action(pid, PlayerAction::AddInstantMoney(amount)) } else { player::execute_action(pid, PlayerAction::AddValue(Stat::Money, amount)) },
+                    |amount: i32| if instant { player::execute_action(pid, PlayerAction::SetInstantMoney(amount)) } else { player::execute_action(pid, PlayerAction::SetValue(Stat::Money, amount)) },
+                    |amount: i32| if instant { player::execute_action(pid, PlayerAction::SubInstantMoney(amount)) } else { player::execute_action(pid, PlayerAction::SubValue(Stat::Money, amount)) },
                 );
             }
             Some((name @ "armor", mm)) => handle_gass_cmd(
                 name,
                 mm,
-                pid,
-                player::get_armor,
-                player::add_armor,
-                player::set_armor,
-                player::sub_armor,
+                || player::execute_action(pid, PlayerAction::GetValue(Stat::Armor)),
+                |amount: f32| player::execute_action(pid, PlayerAction::AddValue(Stat::Armor, amount)),
+                |amount: f32| player::execute_action(pid, PlayerAction::SetValue(Stat::Armor, amount)),
+                |amount: f32| player::execute_action(pid, PlayerAction::SubValue(Stat::Armor, amount)),
             ),
             Some((name @ "health", mm)) => handle_gass_cmd(
                 name,
                 mm,
-                pid,
-                player::get_health,
-                player::add_health,
-                player::set_health,
-                player::sub_health,
+                || player::execute_action(pid, PlayerAction::GetValue(Stat::Health)),
+                |amount: f32| player::execute_action(pid, PlayerAction::AddValue(Stat::Health, amount)),
+                |amount: f32| player::execute_action(pid, PlayerAction::SetValue(Stat::Health, amount)),
+                |amount: f32| player::execute_action(pid, PlayerAction::SubValue(Stat::Health, amount)),
             ),
             Some((_, _)) | None => unreachable!(),
         }
@@ -110,26 +107,25 @@ where
 fn handle_gass_cmd<T, GetFn, AddFn, SetFn, SubFn>(
     name: &str,
     matches: &ArgMatches,
-    pid: u32,
     get_fn: GetFn,
     add_fn: AddFn,
     set_fn: SetFn,
     sub_fn: SubFn,
 ) where
     T: Clone + Copy + Display + Send + Sync + 'static,
-    GetFn: FnOnce(u32) -> Result<T, Errno>,
-    AddFn: FnOnce(u32, T) -> Result<T, Errno>,
-    SetFn: FnOnce(u32, T) -> Result<T, Errno>,
-    SubFn: FnOnce(u32, T) -> Result<T, Errno>,
+    GetFn: FnOnce() -> Result<T, Errno>,
+    AddFn: FnOnce(T) -> Result<T, Errno>,
+    SetFn: FnOnce(T) -> Result<T, Errno>,
+    SubFn: FnOnce(T) -> Result<T, Errno>,
 {
     match matches.subcommand() {
-        Some(("get", _)) => match get_fn(pid) {
+        Some(("get", _)) => match get_fn() {
             Ok(value) => println!("{name}: {value}"),
             Err(e) => eprintln!("Couldn't get {name}: {e}"),
         },
         Some(("add", msm)) => {
             if let Some(amount) = msm.get_one::<T>("amount") {
-                match add_fn(pid, *amount) {
+                match add_fn(*amount) {
                     Ok(new_value) => println!("{name} added! New amount: {new_value}"),
                     Err(e) => eprintln!("Couldn't add {name}: {e}"),
                 }
@@ -137,7 +133,7 @@ fn handle_gass_cmd<T, GetFn, AddFn, SetFn, SubFn>(
         }
         Some(("set", msm)) => {
             if let Some(amount) = msm.get_one::<T>("amount") {
-                match set_fn(pid, *amount) {
+                match set_fn(*amount) {
                     Ok(new_value) => println!("{name} set! New amount: {new_value}"),
                     Err(e) => eprintln!("Couldn't set {name}: {e}"),
                 }
@@ -145,7 +141,7 @@ fn handle_gass_cmd<T, GetFn, AddFn, SetFn, SubFn>(
         }
         Some(("sub", msm)) => {
             if let Some(amount) = msm.get_one::<T>("amount") {
-                match sub_fn(pid, *amount) {
+                match sub_fn(*amount) {
                     Ok(new_value) => println!("{name} subtracted! New amount: {new_value}"),
                     Err(e) => eprintln!("Couldn't subtract {name}: {e}"),
                 }
