@@ -2,11 +2,17 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum Errno {
-    #[error("EFAULT: The memory described by (local/remote)_iov is outside the caller's accessible address space.")]
+    #[error(
+        "EFAULT: The memory described by (local/remote)_iov is outside the caller's accessible address space."
+    )]
     Fault,
-    #[error("EINVAL: The sum of the iov_len values of either local_iov or remote_iov overflows a ssize_t value.")]
+    #[error(
+        "EINVAL: The sum of the iov_len values of either local_iov or remote_iov overflows a ssize_t value."
+    )]
     Inval,
-    #[error("EPERM: The caller does not have permission to access the address space of the process pid.")]
+    #[error(
+        "EPERM: The caller does not have permission to access the address space of the process pid."
+    )]
     Perm,
     #[error("ESRCH: No process with ID pid exists.")]
     Srch,
@@ -21,7 +27,7 @@ impl From<i32> for Errno {
             libc::EINVAL => Self::Inval,
             libc::EPERM => Self::Perm,
             libc::ESRCH => Self::Srch,
-            v => Self::Unknown(v)
+            v => Self::Unknown(v),
         }
     }
 }

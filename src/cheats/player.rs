@@ -5,8 +5,8 @@ const LOC_ARMOR: u32 = 0x502af90;
 const LOC_HEALTH: u32 = 0x502af88;
 
 const LOC_MONEY: u32 = 0xb7ce50;
-const LOC_MONEY_ANIM_1: u32= 0xb7ce54;
-const LOC_MONEY_ANIM_2: u32= 0xbaa430;
+const LOC_MONEY_ANIM_1: u32 = 0xb7ce54;
+const LOC_MONEY_ANIM_2: u32 = 0xbaa430;
 
 pub fn get_money(pid: u32) -> Result<i32, Errno> {
     memory::get_value_at_location(pid, LOC_MONEY)

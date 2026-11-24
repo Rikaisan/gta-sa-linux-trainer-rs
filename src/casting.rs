@@ -10,8 +10,8 @@ pub trait CVoidPtr {
 impl CVoidPtr for f32 {}
 impl CVoidPtr for i32 {}
 impl CVoidPtr for i16 {}
-impl CVoidPtr for i8  {}
-impl CVoidPtr for u8  {}
+impl CVoidPtr for i8 {}
+impl CVoidPtr for u8 {}
 
 pub trait AsCVoidPtr {
     fn as_cvoid_ptr(self) -> *mut c_void;
