@@ -1,0 +1,215 @@
+{
+    "version": 3,
+    "notes": "",
+    "bookmarks": {},
+    "address_tree": [
+        [
+            "Player",
+            "0x0",
+            [
+                2,
+                10,
+                true,
+                0,
+                0
+            ],
+            [
+                [
+                    "Health",
+                    "0x502af88",
+                    [
+                        4,
+                        10,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ],
+                [
+                    "Armor",
+                    "0x502af90",
+                    [
+                        4,
+                        10,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ],
+                [
+                    "FN - Decrease Health",
+                    "0x004b331f",
+                    [
+                        10,
+                        6,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ],
+                [
+                    "FN - Decrease Armor",
+                    "0x004ad5ca",
+                    [
+                        10,
+                        6,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ],
+                [
+                    "Money - Main",
+                    "0xb7ce50",
+                    [
+                        2,
+                        10,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ],
+                [
+                    "Money - Anims",
+                    "0xb7ce54",
+                    [
+                        2,
+                        10,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ],
+                [
+                    "Money - Anims",
+                    "0xbaa430",
+                    [
+                        2,
+                        10,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ],
+                [
+                    "Wanted Level - Main",
+                    "0xb0627fa",
+                    [
+                        0,
+                        10,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ],
+                [
+                    "Wanted Level - Extra",
+                    "0xbaa420",
+                    [
+                        0,
+                        10,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ],
+                [
+                    "Wanted Level - Extra",
+                    "0xb06280c",
+                    [
+                        0,
+                        10,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ]
+            ]
+        ],
+        [
+            "Weapons",
+            "0x0",
+            [
+                2,
+                10,
+                true,
+                0,
+                0
+            ],
+            [
+                [
+                    "WS Pistol - Total",
+                    "0x502b02c",
+                    [
+                        2,
+                        10,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ],
+                [
+                    "WS Pistol - Magazine",
+                    "0x502b028",
+                    [
+                        2,
+                        10,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ],
+                [
+                    "WS Pistol - Type",
+                    "0x502b020",
+                    [
+                        2,
+                        10,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ],
+                [
+                    "FN - Descrease Total Ammo",
+                    "0x007428e6",
+                    [
+                        10,
+                        3,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ],
+                [
+                    "FN - Decrease Magazine Ammo",
+                    "0x007428b0",
+                    [
+                        10,
+                        3,
+                        true,
+                        0,
+                        0
+                    ],
+                    []
+                ]
+            ]
+        ]
+    ],
+    "process_name": "gta-sa.exe",
+    "structures": {}
+}
