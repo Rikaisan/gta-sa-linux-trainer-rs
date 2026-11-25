@@ -4,7 +4,7 @@ mod error;
 mod memory;
 mod util;
 
-use crate::{cheats::player::{self, PlayerAction, Stat}, error::Errno};
+use crate::{cheats::player, error::Errno};
 use clap::{Arg, ArgAction, ArgMatches, builder::Command, error::ErrorKind};
 use std::{fmt::Display, str::FromStr};
 
@@ -34,27 +34,27 @@ fn main() {
                 handle_gass_cmd(
                     name,
                     mm,
-                    || player::execute_action(pid, PlayerAction::GetValue(Stat::Money)),
-                    |amount: i32| if instant { player::execute_action(pid, PlayerAction::AddInstantMoney(amount)) } else { player::execute_action(pid, PlayerAction::AddValue(Stat::Money, amount)) },
-                    |amount: i32| if instant { player::execute_action(pid, PlayerAction::SetInstantMoney(amount)) } else { player::execute_action(pid, PlayerAction::SetValue(Stat::Money, amount)) },
-                    |amount: i32| if instant { player::execute_action(pid, PlayerAction::SubInstantMoney(amount)) } else { player::execute_action(pid, PlayerAction::SubValue(Stat::Money, amount)) },
+                    || player::money::get(pid),
+                    |amount| { if instant { player::money_anim::add(pid, amount)?; } player::money::add(pid, amount) },
+                    |amount| { if instant { player::money_anim::set(pid, amount)?; } player::money::set(pid, amount) },
+                    |amount| { if instant { player::money_anim::sub(pid, amount)?; } player::money::sub(pid, amount) },
                 );
             }
             Some((name @ "armor", mm)) => handle_gass_cmd(
                 name,
                 mm,
-                || player::execute_action(pid, PlayerAction::GetValue(Stat::Armor)),
-                |amount: f32| player::execute_action(pid, PlayerAction::AddValue(Stat::Armor, amount)),
-                |amount: f32| player::execute_action(pid, PlayerAction::SetValue(Stat::Armor, amount)),
-                |amount: f32| player::execute_action(pid, PlayerAction::SubValue(Stat::Armor, amount)),
+                || player::armor::get(pid),
+                |amount| player::armor::add(pid, amount),
+                |amount| player::armor::set(pid, amount),
+                |amount| player::armor::sub(pid, amount),
             ),
             Some((name @ "health", mm)) => handle_gass_cmd(
                 name,
                 mm,
-                || player::execute_action(pid, PlayerAction::GetValue(Stat::Health)),
-                |amount: f32| player::execute_action(pid, PlayerAction::AddValue(Stat::Health, amount)),
-                |amount: f32| player::execute_action(pid, PlayerAction::SetValue(Stat::Health, amount)),
-                |amount: f32| player::execute_action(pid, PlayerAction::SubValue(Stat::Health, amount)),
+                || player::health::get(pid),
+                |amount| player::health::add(pid, amount),
+                |amount| player::health::set(pid, amount),
+                |amount| player::health::sub(pid, amount),
             ),
             Some((_, _)) | None => unreachable!(),
         }
