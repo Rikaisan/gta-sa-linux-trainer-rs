@@ -14,6 +14,7 @@ fn main() {
             .author("Rikai")
             .version("0.0.1")
             .about("A GTA:SA trainer for Linux")
+            .arg_required_else_help(true)
             .subcommands([
                 create_gass_cmd::<i32>("money").arg(
                     Arg::new("instant")
@@ -78,9 +79,11 @@ where
     Command::new(name)
         .about(format!("Modify the player's {name}"))
         .subcommands([
-            Command::new("get").about(format!("Gets the player's {name}")),
+            Command::new("get")
+                .about(format!("Gets the player's {name}")),
             Command::new("add")
                 .about(format!("Adds <amount> to the player's {name}"))
+                .arg_required_else_help(true)
                 .arg(
                     Arg::new("amount")
                         .required(true)
@@ -88,6 +91,7 @@ where
                 ),
             Command::new("set")
                 .about(format!("Sets the player's {name} to <amount>"))
+                .arg_required_else_help(true)
                 .arg(
                     Arg::new("amount")
                         .required(true)
@@ -95,12 +99,14 @@ where
                 ),
             Command::new("sub")
                 .about(format!("Subtracts <amount> to the player's {name}"))
+                .arg_required_else_help(true)
                 .arg(
                     Arg::new("amount")
                         .required(true)
                         .value_parser(num_parser::<T>),
                 ),
         ])
+        .arg_required_else_help(true)
         .subcommand_required(true)
 }
 
